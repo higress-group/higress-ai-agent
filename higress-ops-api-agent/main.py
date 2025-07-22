@@ -53,9 +53,15 @@ class Agent:
         higress-controller和higress-gateway的容器日志
         """
 
-        memory_prompt="""
-        higress相关资源的命名空间是higress-system
-        """
+        memory_file_path = os.getenv('MEMORY_FILE_PATH')
+        if not memory_file_path:
+            memory_file_path = os.path.join(os.path.dirname(__file__), 'memory')
+        try:
+            with open(memory_file_path, 'r', encoding='utf-8') as f:
+                memory_prompt = f.read()
+        except FileNotFoundError:
+            print("memory文件不存在")
+            memory_prompt = ""
 
         bot = SafeAssistant(
             llm=llm_cfg,
