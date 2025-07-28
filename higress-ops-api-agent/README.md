@@ -70,3 +70,5 @@ data:
   meshNetworks: 'networks: {}'
 
 ```
+
+## 配置环境变量.env.example
