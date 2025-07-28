@@ -27,7 +27,6 @@ class Agent:
         if api_mcp_url == None:
             raise ValueError("请设置环境变量 HIGRESS_API_MCP_SERVER_URL")
 
-
         tools = [{
             "mcpServers": {
                 "higress-api-mcp-server": {
@@ -78,6 +77,9 @@ class Agent:
         messages = []
         while True:
             query = input('\nuser query: ')
+            if query.lower() in ['exit', 'quit']:
+                print("退出")
+                break
             # Append the user query to the chat history.
             messages.append({'role': 'user', 'content': query})
             response = []
