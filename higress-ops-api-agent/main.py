@@ -48,7 +48,7 @@ class Agent:
         你可以调用kubectl-ai-mcp-server进行Kubernetes集群的运维和管理。
         
         你可以调用 kubectl exec + curl 工具进行 envoy/istio 相关 debug 接口的请求
-        对于debug可能很有用的
+        对于debug可能很有用的工具
         /debug/configz 接口可以获取网关配置并分析（higress-controller中）
         higress-controller和higress-gateway的容器日志
         """
