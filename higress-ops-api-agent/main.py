@@ -20,12 +20,12 @@ class Agent:
             },
         }
 
-        if os.getenv('DASHSCOPE_API_KEY') ==None:
-            raise ValueError("请设置环境变量 DASHSCOPE_API_KEY")
+        if os.getenv('DASHSCOPE_API_KEY') == None:
+            raise ValueError("Please set environment variable DASHSCOPE_API_KEY")
 
         api_mcp_url = os.getenv("HIGRESS_API_MCP_SERVER_URL")
         if api_mcp_url == None:
-            raise ValueError("请设置环境变量 HIGRESS_API_MCP_SERVER_URL")
+            raise ValueError("Please set environment variable HIGRESS_API_MCP_SERVER_URL")
 
         tools = [{
             "mcpServers": {
@@ -66,7 +66,7 @@ class Agent:
             llm=llm_cfg,
             name='higress-report-agent',
             function_list=tools,
-            description="我是Higress-ops-api-agent，可以帮助你进行运维和api管理",
+            description="I am Higress-ops-api-agent, I can help you with operations and API management",
             system_message=system_prompt+memory_prompt
         )
         return bot
@@ -78,7 +78,7 @@ class Agent:
         while True:
             query = input('\nuser query: ')
             if query.lower() in ['exit', 'quit']:
-                print("退出")
+                print("Exiting")
                 break
             # Append the user query to the chat history.
             messages.append({'role': 'user', 'content': query})
@@ -96,7 +96,6 @@ class Agent:
         WebUI(self.llm_assistant).run()
 
 def main():
-    """主函数"""
     load_dotenv()
 
     agent = Agent()

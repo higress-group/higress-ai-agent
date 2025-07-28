@@ -21,29 +21,38 @@ kind: ConfigMap
 metadata:
   name: higress-config
   namespace: higress-system
-  resourceVersion: '3402'
+  resourceVersion: '1009610'
 data:
-  higress: |-
+  higress: |
     mcpServer:
-      sse_path_suffix: /sse # SSE 连接的路径后缀
-      enable: true # 启用 MCP Server
+      sse_path_suffix: /sse  # SSE 连接的路径后缀
+      enable: true           # 启用 MCP Server
       redis:
-        address: redis-stack-server.higress-system.svc.cluster.local:6379 # Redis服务地址
-        username: "" # Redis用户名（可选）
-        password: "" # Redis密码（可选）
-        db: 0 # Redis数据库（可选）
-      match_list: # MCP Server 会话保持路由规则（当匹配下面路径时，将被识别为一个 MCP 会话，通过 SSE 等机制进行会话保持）
+        address: redis-stack-server.higress-system.svc.cluster.local:6379  # Redis服务地址
+        username: ""         # Redis用户名（可选）
+        password: ""         # Redis密码（可选）
+        db: 0                # Redis数据库（可选）
+      match_list:            # MCP Server 会话保持路由规则
         - match_rule_domain: "*"
           match_rule_path: /higress-api
           match_rule_type: "prefix"
+        - match_rule_domain: "*"
+          match_rule_path: /mysql
+          match_rule_type: "prefix"
       servers:
-        - name: higress-api-mcp-server # MCP Server 名称
-          path: /higress-api # 访问路径，需要与 match_list 中的配置匹配
-          type: higress-api # 类型和 RegisterServer 一致
+        - name: higress-api-mcp-server     # MCP Server 名称
+          path: /higress-api               # 访问路径，需要与 match_list 中的配置匹配
+          type: higress-api                # 类型和 RegisterServer 一致
           config:
             higressURL: http://higress-console.higress-system.svc.cluster.local:8080
             username: admin
             password: admin
+        - name: mysql                      # MCP Server 名称
+          path: /mysql                     # 访问路径，需要与 match_list 中的配置匹配
+          type: database                   # 类型为数据库
+          config:
+            dsn: "root:youpasswd@tcp(ip:port)/database"
+            dbType: "mysql"
   mesh: |-
     accessLogEncoding: TEXT
     accessLogFile: /dev/stdout
