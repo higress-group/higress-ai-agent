@@ -1,9 +1,7 @@
-# 第一版
-1. 采用system+memory prompt，方便用户个人把一些需要agent长期记忆的信息放到memory prompt中
-2. system prompt中，会陆续加上可能有利于debug，判断的说明
+# higress-ops-api-agent
 
 ## 安装 kubectl-ai
-使用 https://github.com/GoogleCloudPlatform/kubectl-ai
+项目使用 `kubectl-ai` 作为 Kubernetes 运维的 MCP Server。参考项目：`https://github.com/GoogleCloudPlatform/kubectl-ai`
 
 安装教程
 ```mermaid
@@ -13,8 +11,8 @@ curl -sSL https://raw.githubusercontent.com/GoogleCloudPlatform/kubectl-ai/main/
 kubectl-ai --help
 ```
 
-## 启动higress，启动higress-api-mcp-server
-higress-configmap的控制台参考配置
+## 开启higress-api-mcp-server
+higress-configmap 的控制台参考配置
 ```mermaid
 apiVersion: v1
 kind: ConfigMap
@@ -80,4 +78,39 @@ data:
 
 ```
 
-## 配置环境变量.env.example
+## 长期记忆
+您可以将想要 agent 记忆的内容写入一个叫 memory 的文件中，然后通过环境变量MEMORY_FILE_PATH
+指定文件路径
+
+
+## 配置环境变量（.env 示例）
+```
+# url of higress api mcp server
+HIGRESS_API_MCP_SERVER_URL=
+
+MEMORY_FILE_PATH=./memory
+
+DASHSCOPE_API_KEY=
+
+MODEL_NAME=qwen-plus
+
+MODEL_SERVER=
+```
+
+## 运行
+```bash
+pip install -U qwen-agent python-dotenv
+
+# 准备 .env 文件（或导出环境变量）
+python main.py
+```
+
+## 使用样例
+- **创建一个 OpenAPI 类型的 MCP 服务，指向 127.0.0.1:5555**
+
+直接在交互模式中输入如下自然语言指令（中文即可）：
+
+```text
+帮我创建一个 MCP 服务，服务类型是 openapi，指向我 127.0.0.1:5555 这个后端服务
+```
+
