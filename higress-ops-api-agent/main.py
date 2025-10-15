@@ -53,6 +53,7 @@ class Agent:
         Debugging tips:
             - /debug/configz (from higress-controller) can fetch and analyze gateway configs.
             - Check logs from higress-controller and higress-gateway containers.
+            - You can use kubectl to enter the container and curl to adjust the log level of the higress for easier analysis
         
         Communication guidelines:
             - Before invoking any tool, briefly state the purpose of the call. If an error occurs, print the error details to aid diagnosis.
