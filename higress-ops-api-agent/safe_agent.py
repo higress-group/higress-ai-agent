@@ -8,7 +8,7 @@ class SafeAssistant(Assistant):
         super().__init__(*args, **kwargs)
         self._pending_tool = None  # Pending tool invocation awaiting confirmation
 
-        # Whitelist of safe read-only tools
+        # Whitelist of safe read-only tools (Higress API MCP Server)
         self._whitelist_tools = {
             'get-ai-provider',
             'get-ai-route',
@@ -24,6 +24,11 @@ class SafeAssistant(Assistant):
             'list-service-sources'
         }
 
+        # Safe tool name prefixes (automatically considered safe)
+        self._safe_tool_prefixes = {
+            'higress-ops-mcp-server-get',  # All Higress Ops read operations
+        }
+
         # Whitelist of read-only kubectl subcommands
         self._kubectl_readonly_commands = {
             'get', 'describe', 'logs', 'top', 'explain', 'version',
@@ -31,8 +36,13 @@ class SafeAssistant(Assistant):
         }
 
     def _is_safe_tool(self, tool_name: str) -> bool:
-        """Check whether the tool is in the read-only whitelist"""
-        return tool_name in self._whitelist_tools
+        """Check whether the tool is in the read-only whitelist or matches a safe prefix"""
+        # Check exact match in whitelist
+        if tool_name in self._whitelist_tools:
+            return True
+        
+        # Check if tool name starts with any safe prefix
+        return any(tool_name.startswith(prefix) for prefix in self._safe_tool_prefixes)
 
     def _is_safe_kubectl_command(self, tool_args) -> bool:
         """Check whether a kubectl command is safe (read-only)"""

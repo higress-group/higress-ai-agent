@@ -23,24 +23,41 @@ class Agent:
         if os.getenv('DASHSCOPE_API_KEY') == None:
             raise ValueError("Please set environment variable DASHSCOPE_API_KEY")
 
-        api_mcp_url = os.getenv("HIGRESS_API_MCP_SERVER_URL")
-        if api_mcp_url == None:
-            raise ValueError("Please set environment variable HIGRESS_API_MCP_SERVER_URL")
-
-        tools = [{
-            "mcpServers": {
-                "higress-api-mcp-server": {
-                    "type": "sse",
-                    "url": api_mcp_url,
-                    "sse_read_timeout": 3000
-                },
-                "kubectl-ai-mcp-server": {
-                    "command": "kubectl-ai",
-                    "args": ["--mcp-server"],
-                    "sse_read_timeout": 3000
-                },
+        # 构建 MCP 服务器配置
+        mcp_servers = {}
+        
+        # 检查是否启用 higress-ops-mcp-server
+        ops_mcp_url = os.getenv("HIGRESS_OPS_MCP_SERVER_URL")
+        if ops_mcp_url:
+            mcp_servers["higress-ops-mcp-server"] = {
+                "type": "sse",
+                "url": ops_mcp_url,
+                "sse_read_timeout": 3000
             }
-        }]
+            print(f"启用 higress-ops-mcp-server: {ops_mcp_url}")
+        
+        # 检查是否启用 higress-api-mcp-server
+        api_mcp_url = os.getenv("HIGRESS_API_MCP_SERVER_URL")
+        if api_mcp_url:
+            mcp_servers["higress-api-mcp-server"] = {
+                "type": "sse",
+                "url": api_mcp_url,
+                "sse_read_timeout": 3000
+            }
+            print(f"启用 higress-api-mcp-server: {api_mcp_url}")
+        
+        # 检查是否启用 kubectl-ai-mcp-server
+        enable_kubectl = os.getenv("ENABLE_KUBECTL_MCP_SERVER", "false").lower() == "true"
+        if enable_kubectl:
+            mcp_servers["kubectl-ai-mcp-server"] = {
+                "command": "kubectl-ai",
+                "args": ["--mcp-server"],
+                "sse_read_timeout": 3000
+            }
+            print("启用 kubectl-ai-mcp-server")
+        
+        # 如果没有启用任何 MCP 服务器,使用空工具列表
+        tools = [{"mcpServers": mcp_servers}] if mcp_servers else []
 
         system_prompt="""
         You are an operations and API management assistant for the Higress community. You should leverage available tools to help the user solve problems end-to-end.
