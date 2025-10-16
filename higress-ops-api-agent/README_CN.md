@@ -1,41 +1,41 @@
 # higress-ops-api-agent
 
-English | [简体中文](./README_CN)
+[English](./README) | 简体中文
 
-An AI-powered operations and API management assistant for Higress, integrating multiple MCP Servers to help you easily manage Higress gateway and Kubernetes clusters.
+一个基于 AI 的 Higress 运维和 API 管理助手，集成多个 MCP Server，帮助您轻松管理 Higress 网关和 Kubernetes 集群。
 
-## Features
+## 功能特性
 
-- 🚀 **Higress API Management**: Manage routes, services, plugins, etc. via higress-api-mcp-server
-- 🔧 **Higress Operations**: Get Envoy/Istiod configuration and status via higress-ops-mcp-server
-- ☸️ **Kubernetes Operations**: Manage K8s clusters via kubectl-ai
-- 🔒 **Security Control**: Built-in tool invocation safety mechanism, sensitive operations require user confirmation
-- 💾 **Long-term Memory**: Support configuring long-term memory content via files
-- 🔌 **Flexible Configuration**: Control which MCP Servers to enable via environment variables
+- 🚀 **Higress API 管理**: 通过 higress-api-mcp-server 管理路由、服务、插件等
+- 🔧 **Higress 运维**: 通过 higress-ops-mcp-server 获取 Envoy/Istiod 配置和状态
+- ☸️ **Kubernetes 运维**: 通过 kubectl-ai 进行 K8s 集群管理
+- 🔒 **安全控制**: 内置工具调用安全机制，敏感操作需要用户确认
+- 💾 **长期记忆**: 支持通过文件配置长期记忆内容
+- 🔌 **灵活配置**: 通过环境变量控制启用哪些 MCP Server
 
-## Prerequisites
+## 前置依赖
 
-### 1. Install kubectl-ai (Optional)
+### 1. 安装 kubectl-ai (可选)
 
-If you need Kubernetes operations functionality, install `kubectl-ai`.
+如果需要使用 Kubernetes 运维功能，需要安装 `kubectl-ai`。
 
-Reference project: https://github.com/GoogleCloudPlatform/kubectl-ai
+参考项目：https://github.com/GoogleCloudPlatform/kubectl-ai
 
-Installation command:
+安装命令：
 ```bash
 curl -sSL https://raw.githubusercontent.com/GoogleCloudPlatform/kubectl-ai/main/install.sh | bash
 
-# Verify installation
+# 验证安装
 kubectl-ai --help
 ```
 
-### 2. Configure Higress MCP Server (Optional)
+### 2. 配置 Higress MCP Server (可选)
 
-If you need Higress API management or operations functionality, enable MCP Server in Higress.
+如果需要使用 Higress API 管理或运维功能，需要在 Higress 中启用 MCP Server。
 
-#### higress-api-mcp-server Configuration
+#### higress-api-mcp-server 配置
 
-Add the following configuration to the `higress-config` ConfigMap:
+在 `higress-config` ConfigMap 中添加以下配置：
 
 ```yaml
 apiVersion: v1
@@ -109,152 +109,148 @@ data:
 
 ```
 
-## Environment Variables Configuration
+## 环境变量配置
 
-Create a `.env` file and configure the following environment variables:
+创建 `.env` 文件并配置以下环境变量：
 
 ```bash
-# Higress API MCP Server URL (optional, won't be enabled if not set)
-# Example: http://localhost:8080/higress-api/sse
+# Higress API MCP Server URL (可选，不设置则不启用)
+# 示例: http://localhost:8080/higress-api/sse
 HIGRESS_API_MCP_SERVER_URL=
 
-# Higress Ops MCP Server URL (optional, won't be enabled if not set)
-# Example: http://localhost:8080/higress-ops/sse
+# Higress Ops MCP Server URL (可选，不设置则不启用)
+# 示例: http://localhost:8080/higress-ops/sse
 HIGRESS_OPS_MCP_SERVER_URL=
 
-# Whether to enable Kubectl MCP Server (optional, defaults to false)
-# Requires kubectl-ai to be installed first
+# 是否启用 Kubectl MCP Server (可选，默认为 false)
+# 需要先安装 kubectl-ai
 ENABLE_KUBECTL_MCP_SERVER=false
 
-# Long-term memory file path (optional)
+# 长期记忆文件路径 (可选)
 MEMORY_FILE_PATH=./memory
 
-# Dashscope API Key (required)
+# Dashscope API Key (必需)
 DASHSCOPE_API_KEY=your-api-key
 
-# Model name
+# 模型名称
 MODEL_NAME=qwen-plus
 
-# Model server address (optional)
+# 模型服务地址 (可选)
 MODEL_SERVER=
 ```
 
-### MCP Server Configuration Guide
+### MCP Server 配置说明
 
-- **higress-api-mcp-server**: For Higress API management (routes, services, plugins, etc.)
-- **higress-ops-mcp-server**: For Higress operations (get Envoy/Istiod configuration and status)
-- **kubectl-ai-mcp-server**: For Kubernetes cluster management
+- **higress-api-mcp-server**: 用于 Higress API 管理（路由、服务、插件等）
+- **higress-ops-mcp-server**: 用于 Higress 运维（获取 Envoy/Istiod 配置和状态）
+- **kubectl-ai-mcp-server**: 用于 Kubernetes 集群管理
 
-**By default, all MCP Servers are disabled**. You can selectively enable them as needed.
+**默认情况下所有 MCP Server 都不启用**，您可以根据需要选择性启用。
 
-## Long-term Memory
+## 长期记忆
 
-You can write the content you want the agent to remember into a file (default is `memory`), then specify the file path via the `MEMORY_FILE_PATH` environment variable. The agent will read the file content at startup as part of the system prompt.
+您可以将想要 agent 记忆的内容写入一个文件（默认为 `memory`），然后通过环境变量 `MEMORY_FILE_PATH` 指定文件路径。Agent 会在启动时读取该文件内容作为系统提示的一部分。
 
-## Installation and Running
+## 安装和运行
 
-### 1. Install Dependencies
+### 1. 安装依赖
 
 ```bash
 pip install -U qwen-agent python-dotenv
 ```
 
-### 2. Configure Environment Variables
+### 2. 配置环境变量
 
-Create a `.env` file, refer to the environment variable configuration guide above.
+创建 `.env` 文件，参考上面的环境变量配置说明。
 
-### 3. Run the Agent
+### 3. 运行 Agent
 
 ```bash
 python main.py
 ```
 
-After the agent starts, it will display the enabled MCP Servers, for example:
+Agent 启动后会显示已启用的 MCP Server，例如：
 
 ```
 启用 higress-api-mcp-server: http://localhost:8080/higress-api/sse
 启用 kubectl-ai-mcp-server
 ```
 
-## Usage Examples
+## 使用示例
 
-### Example 1: Create MCP Service
+### 示例 1: 创建 MCP 服务
 
-In interactive mode, enter:
+在交互模式中输入：
 
 ```
 帮我创建一个 MCP 服务，服务类型是 openapi，指向我 127.0.0.1:5555 这个后端服务
 ```
-(Help me create an MCP service with openapi type, pointing to my backend service at 127.0.0.1:5555)
 
-### Example 2: View Higress Routes
+### 示例 2: 查看 Higress 路由
 
 ```
 列出所有的 Higress 路由
 ```
-(List all Higress routes)
 
-### Example 3: Get Envoy Configuration
+### 示例 3: 获取 Envoy 配置
 
 ```
 帮我查看 Envoy 的集群配置
 ```
-(Help me check the Envoy cluster configuration)
 
-### Example 4: Kubernetes Operations
+### 示例 4: Kubernetes 运维
 
 ```
 查看 higress-system 命名空间下的所有 pod
 ```
-(View all pods in the higress-system namespace)
 
-## Security Mechanism
+## 安全机制
 
-The project has a built-in tool invocation safety mechanism:
+项目内置了工具调用安全机制：
 
-- ✅ **Auto-approved**: All read-only operations like `get`, `list` are executed automatically
-- ✅ **Auto-approved**: kubectl read-only commands (get, describe, logs, etc.) are executed automatically
-- ⚠️ **Requires confirmation**: Write operations like create, update, delete require user confirmation
+- ✅ **自动放行**: 所有 `get`、`list` 等只读操作自动执行
+- ✅ **自动放行**: kubectl 的只读命令（get、describe、logs 等）自动执行
+- ⚠️ **需要确认**: 创建、更新、删除等写操作需要用户确认
 
-When a sensitive operation is triggered, you will see:
+当触发敏感操作时，会提示：
 
 ```
 Sensitive tool invocation detected: add-route, args: {...}
 Allow invoking this tool? Enter y or n+reason (e.g., y or n+why):
 ```
 
-Enter `y` to allow execution, or `n+reason` to reject.
+输入 `y` 允许执行，输入 `n+原因` 拒绝执行。
 
-## Architecture
+## 架构说明
 
 ```
 ┌─────────────────────────────────────────┐
 │     higress-ops-api-agent (AI Agent)    │
 │                                         │
 │  ┌─────────────────────────────────┐   │
-│  │   SafeAssistant (Security Layer) │   │
+│  │   SafeAssistant (安全控制层)     │   │
 │  └─────────────────────────────────┘   │
 │              │                          │
 │              ▼                          │
 │  ┌─────────────────────────────────┐   │
-│  │      MCP Server Integration      │   │
+│  │      MCP Server 集成             │   │
 │  │  ┌─────────────────────────┐    │   │
 │  │  │ higress-api-mcp-server  │    │   │
-│  │  │ (API Management)        │    │   │
+│  │  │ (API 管理)              │    │   │
 │  │  └─────────────────────────┘    │   │
 │  │  ┌─────────────────────────┐    │   │
 │  │  │ higress-ops-mcp-server  │    │   │
-│  │  │ (Operations Monitoring) │    │   │
+│  │  │ (运维监控)              │    │   │
 │  │  └─────────────────────────┘    │   │
 │  │  ┌─────────────────────────┐    │   │
 │  │  │ kubectl-ai-mcp-server   │    │   │
-│  │  │ (K8s Management)        │    │   │
+│  │  │ (K8s 管理)              │    │   │
 │  │  └─────────────────────────┘    │   │
 │  └─────────────────────────────────┘   │
 └─────────────────────────────────────────┘
 ```
 
-## License
+## 许可证
 
-This project is licensed under the Apache 2.0 License.
+本项目采用 Apache 2.0 许可证。
 
