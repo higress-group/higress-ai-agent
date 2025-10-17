@@ -4,6 +4,7 @@ from safe_agent import SafeAssistant
 from qwen_agent.utils.output_beautify import typewriter_print
 from qwen_agent.gui import WebUI
 
+
 class Agent:
     def __init__(self):
         self.llm_assistant = self._init_agent_service()
@@ -23,10 +24,10 @@ class Agent:
         if os.getenv('DASHSCOPE_API_KEY') == None:
             raise ValueError("Please set environment variable DASHSCOPE_API_KEY")
 
-        # 构建 MCP 服务器配置
+        # Build MCP server configuration
         mcp_servers = {}
-        
-        # 检查是否启用 higress-ops-mcp-server
+
+        # Check if higress-ops-mcp-server is enabled
         ops_mcp_url = os.getenv("HIGRESS_OPS_MCP_SERVER_URL")
         if ops_mcp_url:
             mcp_servers["higress-ops-mcp-server"] = {
@@ -34,9 +35,9 @@ class Agent:
                 "url": ops_mcp_url,
                 "sse_read_timeout": 3000
             }
-            print(f"启用 higress-ops-mcp-server: {ops_mcp_url}")
-        
-        # 检查是否启用 higress-api-mcp-server
+            print(f"Enable higress-ops-mcp-server: {ops_mcp_url}")
+
+        # Check if higress-api-mcp-server is enabled
         api_mcp_url = os.getenv("HIGRESS_API_MCP_SERVER_URL")
         if api_mcp_url:
             mcp_servers["higress-api-mcp-server"] = {
@@ -44,9 +45,9 @@ class Agent:
                 "url": api_mcp_url,
                 "sse_read_timeout": 3000
             }
-            print(f"启用 higress-api-mcp-server: {api_mcp_url}")
-        
-        # 检查是否启用 kubectl-ai-mcp-server
+            print(f"Enable higress-api-mcp-server: {api_mcp_url}")
+
+        # Check if kubectl-ai-mcp-server is enabled
         enable_kubectl = os.getenv("ENABLE_KUBECTL_MCP_SERVER", "false").lower() == "true"
         if enable_kubectl:
             mcp_servers["kubectl-ai-mcp-server"] = {
@@ -54,12 +55,12 @@ class Agent:
                 "args": ["--mcp-server"],
                 "sse_read_timeout": 3000
             }
-            print("启用 kubectl-ai-mcp-server")
-        
-        # 如果没有启用任何 MCP 服务器,使用空工具列表
+            print("Enable kubectl-ai-mcp-server")
+
+        # If no MCP servers are enabled, use empty tool list
         tools = [{"mcpServers": mcp_servers}] if mcp_servers else []
 
-        system_prompt="""
+        system_prompt = """
         You are an operations and API management assistant for the Higress community. You should leverage available tools to help the user solve problems end-to-end.
         
         Your Ops capabilities:
@@ -98,17 +99,55 @@ class Agent:
             name='higress-report-agent',
             function_list=tools,
             description="I am Higress-ops-api-agent, I can help you with operations and API management",
-            system_message=system_prompt+memory_prompt
+            system_message=system_prompt + memory_prompt
         )
         return bot
+
+    def _read_multiline_input(self):
+        """
+        Read multiline input, supports pasting multiline text
+        - Input empty line (press Enter directly) to end input
+        - Input 'exit' or 'quit' to exit program
+        """
+        print('\nuser query (enter empty line to finish, exit/quit to exit):')
+        lines = []
+
+        while True:
+            try:
+                line = input('... ' if lines else '')
+
+                # Check if it's an exit command
+                if not lines and line.lower() in ['exit', 'quit']:
+                    return None
+
+                # Empty line indicates end of input
+                if not line:
+                    break
+
+                lines.append(line)
+            except EOFError:
+                # Ctrl+D also ends input
+                break
+
+        return '\n'.join(lines)
 
     def interactive_mode(self):
         bot = self.llm_assistant
         # Stores the chat history
         messages = []
+
+        print("=" * 60)
+        print("Higress Operations & API Management Agent")
+        print("=" * 60)
+        print("Tip: Supports multiline input, enter empty line to end current message")
+        print("     Enter 'exit' or 'quit' to exit program")
+        print("=" * 60)
+
         while True:
-            query = input('\nuser query: ')
-            if query.lower() in ['exit', 'quit']:
+            query = self._read_multiline_input()
+
+            # User chooses to exit
+            if query is None:
                 print("Exiting")
                 break
 
@@ -120,7 +159,7 @@ class Agent:
             messages.append({'role': 'user', 'content': query})
             response = []
             response_plain_text = ''
-            print('bot response:')
+            print('\nbot response:')
             for response in bot.run(messages=messages):
                 # Streaming output
                 response_plain_text = typewriter_print(response, response_plain_text)
@@ -140,4 +179,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
