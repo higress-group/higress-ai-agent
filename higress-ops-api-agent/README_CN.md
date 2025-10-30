@@ -118,9 +118,17 @@ data:
 # 示例: http://localhost:8080/higress-api/sse
 HIGRESS_API_MCP_SERVER_URL=
 
+# Higress API MCP Server 的 Authorization 请求头 (可选)
+# 示例: Bearer your-token-here
+AUTHORIZATION=
+
 # Higress Ops MCP Server URL (可选，不设置则不启用)
 # 示例: http://localhost:8080/higress-ops/sse
 HIGRESS_OPS_MCP_SERVER_URL=
+
+# Higress Ops MCP Server 的 X-Istiod-Token 请求头 (可选)
+# 生成方式: kubectl create token higress-gateway -n higress-system --audience istio-ca --duration 87600h
+X_ISTIOD_TOKEN=
 
 # 是否启用 Kubectl MCP Server (可选，默认为 false)
 # 需要先安装 kubectl-ai

@@ -30,22 +30,36 @@ class Agent:
         # Check if higress-ops-mcp-server is enabled
         ops_mcp_url = os.getenv("HIGRESS_OPS_MCP_SERVER_URL")
         if ops_mcp_url:
-            mcp_servers["higress-ops-mcp-server"] = {
+            ops_mcp_config = {
                 "type": "sse",
                 "url": ops_mcp_url,
                 "sse_read_timeout": 3000
             }
-            print(f"Enable higress-ops-mcp-server: {ops_mcp_url}")
+            # Add X-Istiod-Token header if provided
+            x_istiod_token = os.getenv("X_ISTIOD_TOKEN")
+            if x_istiod_token:
+                ops_mcp_config["headers"] = {
+                    "X-Istiod-Token": x_istiod_token
+                }
+            mcp_servers["higress-ops-mcp-server"] = ops_mcp_config
+            print(f"enable higress-ops-mcp-server: {ops_mcp_url}")
 
         # Check if higress-api-mcp-server is enabled
         api_mcp_url = os.getenv("HIGRESS_API_MCP_SERVER_URL")
         if api_mcp_url:
-            mcp_servers["higress-api-mcp-server"] = {
+            api_mcp_config = {
                 "type": "sse",
                 "url": api_mcp_url,
                 "sse_read_timeout": 3000
             }
-            print(f"Enable higress-api-mcp-server: {api_mcp_url}")
+            # Add Authorization header if provided
+            authorization = os.getenv("AUTHORIZATION")
+            if authorization:
+                api_mcp_config["headers"] = {
+                    "Authorization": authorization
+                }
+            mcp_servers["higress-api-mcp-server"] = api_mcp_config
+            print(f"enable higress-api-mcp-server: {api_mcp_url}")
 
         # Check if kubectl-ai-mcp-server is enabled
         enable_kubectl = os.getenv("ENABLE_KUBECTL_MCP_SERVER", "false").lower() == "true"
@@ -55,7 +69,7 @@ class Agent:
                 "args": ["--mcp-server"],
                 "sse_read_timeout": 3000
             }
-            print("Enable kubectl-ai-mcp-server")
+            print("enable kubectl-ai-mcp-server")
 
         # If no MCP servers are enabled, use empty tool list
         tools = [{"mcpServers": mcp_servers}] if mcp_servers else []

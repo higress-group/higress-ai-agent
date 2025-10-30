@@ -118,9 +118,17 @@ Create a `.env` file and configure the following environment variables:
 # Example: http://localhost:8080/higress-api/sse
 HIGRESS_API_MCP_SERVER_URL=
 
+# Authorization header for Higress API MCP Server (optional)
+# Example: Bearer your-token-here
+AUTHORIZATION=
+
 # Higress Ops MCP Server URL (optional, won't be enabled if not set)
 # Example: http://localhost:8080/higress-ops/sse
 HIGRESS_OPS_MCP_SERVER_URL=
+
+# X-Istiod-Token header for Higress Ops MCP Server (optional)
+# Generate token with: kubectl create token higress-gateway -n higress-system --audience istio-ca --duration 87600h
+X_ISTIOD_TOKEN=
 
 # Whether to enable Kubectl MCP Server (optional, defaults to false)
 # Requires kubectl-ai to be installed first
