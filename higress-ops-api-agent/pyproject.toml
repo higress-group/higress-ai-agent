@@ -1,0 +1,40 @@
+[project]
+name = "higress-ops-api-agent"
+version = "0.1.0"
+description = "Higress社区的运维和API管理助手"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "qwen-agent",
+    "python-dotenv",
+    "gradio"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "flake8"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0",
+    "black>=23.0",
+    "flake8>=6.0"
+]
+
+[project.scripts]
+higress-agent = "main:main"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
